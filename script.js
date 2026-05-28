@@ -117,23 +117,13 @@ function animateTitleLetters() {
 document.addEventListener("DOMContentLoaded", function () {
     window.scrollTo(0, 0);
 
-    // Ensure loader exists (create if not already in HTML)
-    let loader = document.querySelector('.page-loader');
-    if (!loader) {
-        loader = document.createElement('div');
-        loader.className = 'page-loader';
-        loader.innerHTML = `
-            <div class="loader-candle">🕯</div>
-            <div class="loader-title">Bougie Creation</div>
-            <div class="loader-bar"><div class="loader-bar-fill"></div></div>
-        `;
-        document.body.prepend(loader);
-    }
+    // Use the loader already in HTML
+    const loader = document.getElementById('page-loader') || document.querySelector('.page-loader');
 
-    // Hide loader after 1600ms
+    // Hide loader after 2000ms
     setTimeout(() => {
         if (loader) loader.classList.add('hidden');
-    }, 1600);
+    }, 2000);
 
     animateTitleLetters();
     setupNavScroll();
