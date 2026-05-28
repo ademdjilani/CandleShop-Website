@@ -74,42 +74,66 @@ const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 function animateTitleLetters() {
     const title = document.querySelector('.main-title');
     if (!title) return;
-    const text = title.textContent;
+    const text = title.textContent.trim();
     title.textContent = '';
+    const words = text.split(' ');
     const baseDelay = 300;
-    [...text].forEach((char, i) => {
-        const span = document.createElement('span');
-        span.className = 'char';
-        span.textContent = char === ' ' ? '\u00A0' : char;
-        span.style.animationDelay = (baseDelay + i * 60) + 'ms';
-        title.appendChild(span);
+    let charIndex = 0;
+
+    words.forEach((word, wi) => {
+        // wrap each word in a no-break container
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'word';
+
+        [...word].forEach((char) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = char;
+            span.style.animationDelay = (baseDelay + charIndex * 60) + 'ms';
+            wordSpan.appendChild(span);
+            charIndex++;
+        });
+
+        title.appendChild(wordSpan);
+
+        // add space between words (except after last word)
+        if (wi < words.length - 1) {
+            const spaceSpan = document.createElement('span');
+            spaceSpan.className = 'char word-space';
+            spaceSpan.textContent = '\u00A0';
+            spaceSpan.style.animationDelay = (baseDelay + charIndex * 60) + 'ms';
+            title.appendChild(spaceSpan);
+            charIndex++;
+        }
     });
 }
 
 // ============================
 // PAGE LOADER
 // ============================
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        const loader = document.querySelector('.page-loader');
-        if (loader) loader.classList.add('hidden');
-    }, 1600);
-});
-
 // ============================
 // SCROLL TO TOP ON LOAD
 // ============================
 document.addEventListener("DOMContentLoaded", function () {
     window.scrollTo(0, 0);
 
-    const loader = document.createElement('div');
-    loader.className = 'page-loader';
-    loader.innerHTML = `
-        <div class="loader-candle">🕯</div>
-        <div class="loader-title">Bougie Creation</div>
-        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
-    `;
-    document.body.prepend(loader);
+    // Ensure loader exists (create if not already in HTML)
+    let loader = document.querySelector('.page-loader');
+    if (!loader) {
+        loader = document.createElement('div');
+        loader.className = 'page-loader';
+        loader.innerHTML = `
+            <div class="loader-candle">🕯</div>
+            <div class="loader-title">Bougie Creation</div>
+            <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+        `;
+        document.body.prepend(loader);
+    }
+
+    // Hide loader after 1600ms
+    setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+    }, 1600);
 
     animateTitleLetters();
     setupNavScroll();
@@ -232,7 +256,8 @@ function setupScrollReveal() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+            } else {
+                entry.target.classList.remove('visible');
             }
         });
     }, { threshold: 0.12 });
@@ -253,10 +278,11 @@ function setupStaggeredShopItems() {
                 const siblings = [...entry.target.parentElement.children];
                 const idx = siblings.indexOf(entry.target);
                 const delay = (idx % 4) * 100;
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, delay);
-                observer.unobserve(entry.target);
+                entry.target.style.transitionDelay = delay + 'ms';
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.style.transitionDelay = '0ms';
+                entry.target.classList.remove('visible');
             }
         });
     }, { threshold: 0.08 });

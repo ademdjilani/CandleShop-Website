@@ -152,20 +152,16 @@ body, html {
 /* ── MAIN TITLE ── letter-by-letter reveal */
 .main-title {
     font-family: 'Cinzel', serif;
-    font-size: 3.8rem;
+    font-size: clamp(2rem, 6vw, 3.8rem);
     color: var(--warm-brown);
     font-weight: 600;
     letter-spacing: 0.12em;
     text-shadow: 1px 2px 12px rgba(196,158,133,0.25);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0;
-    overflow: hidden;
-    line-height: 1.1;
+    display: block;
     width: 100%;
     text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 /* each letter is a span injected by JS */
 .main-title .char {
@@ -174,6 +170,14 @@ body, html {
     transform: translateY(60px) rotateX(-40deg);
     animation: charReveal 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
     transform-origin: bottom center;
+}
+.main-title .word {
+    display: inline-block;
+    white-space: nowrap;
+}
+.main-title .word-space {
+    display: inline-block;
+    width: 0.35em;
 }
 @keyframes charReveal {
     to { opacity: 1; transform: translateY(0) rotateX(0deg); }
@@ -1257,9 +1261,9 @@ body, html {
 
     /* HERO improvement */
     .main-title {
-        font-size: 2.2rem;
-        justify-content: center;
-        flex-wrap: wrap;
+        font-size: clamp(1.6rem, 8vw, 2.2rem);
+        white-space: nowrap;
+        overflow: visible;
         text-align: center;
     }
 
